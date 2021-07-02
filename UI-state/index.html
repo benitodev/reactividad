@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UI basada en el estado</title>
+</head>
+
+<body>
+  <h1>UI con estado REACTIVO MUTABLE</h1>
+  <form id="form-dom">
+    <input type="text" name="pi" class="pi">
+    <input type="submit">
+  </form>
+  <h2>Lista</h2>
+  <ul class="list"></ul>
+
+  <script>
+    const d = document;
+
+
+    const state = {
+      todoList: []
+    }
+
+    const template = () => {
+      if (state.todoList.length < 1) {
+        return `<p><em>No hay ninguna lista por hacer</em></p>`
+      }
+
+      const $input = d.querySelector(".pi"),
+        todoTemplate = state.todoList.map(item => `<li>${item}</li>`).join("")
+
+      return todoTemplate
+    }
+
+    //pintado o renderizado de la lista
+    const render = () => {
+      const $list = d.querySelector(".list");
+
+      $list.innerHTML = template()
+    }
+
+
+    // Para no inserccionar de golpe (innerHtml o metodos/propiedades convencionales) 
+    // Acercandonos a un estado reactivo inmutable
+    const setState = obj => {
+      for (const key in obj) {
+        if (state.hasOwnProperty(key)) {
+          state[key] = obj[key];
+
+        }
+        render()
+      }
+    }
+
+    //Poner por defecto propiedades
+    setState({
+      todoList: ["Tarea 1", "Tarea 2"]
+    })
+
+
+    d.addEventListener("DOMContentLoaded", render)
+
+    d.addEventListener("submit", e => {
+      e.preventDefault()
+      const $input = d.querySelector(".pi");
+
+      state.todoList.push($input.value)
+      render()
+
+
+      $input = "";
+    })
+  </script>
+</body>
+
+</html>

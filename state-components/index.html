@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UI basada en el estado</title>
+</head>
+
+<body>
+  <h1>UI con estado REACTIVO MUTABLE</h1>
+  <form id="form-dom">
+    <input type="text" name="pi" class="pi">
+    <input type="submit">
+  </form>
+  <h2>Lista</h2>
+  <ul class="list"></ul>
+
+  <script>
+    const d = document;
+
+    //estado de la aplicación global
+    const state = {
+      todoList: []
+    }
+    //es UI que retorna nuestra aplicación 
+    const template = () => {
+      if (template.data.todoList.length < 1) {
+        return `<p><em>No hay ninguna lista por hacer</em></p>`
+      }
+
+
+      const todoTemplate = template.data.todoList.map(item => `<li>${item}</li>`).join("")
+
+      return todoTemplate
+    }
+
+    //pintado o renderizado de la lista
+    const render = () => {
+      const $list = d.querySelector(".list");
+
+      $list.innerHTML = template()
+    }
+
+    //estado local (es para cada componente dejarle un estado)
+    template.data = {
+      todoList: []
+    }
+
+    // Para no inserccionar de golpe (innerHtml o metodos/propiedades convencionales) 
+    // Acercandonos a un estado reactivo inmutable
+    const setState = obj => {
+      for (const key in obj) {
+        if (template.data.hasOwnProperty(key)) {
+          template.data[key] = obj[key];
+
+        }
+        render()
+      }
+    }
+
+    //Poner por defecto propiedades
+    setState({
+      todoList: ["Tarea 1", "Tarea 2"]
+    })
+
+    //permite la copia del state dejandolo inmutable 
+    const copyState = () => {
+      return JSON.parse(JSON.stringify(template.data))
+    }
+
+
+    d.addEventListener("DOMContentLoaded", render)
+    let items = copyState();
+
+    items.todoList.push("Tarea de itemss")
+    console.log(items)
+
+    let pipo = copyState();
+    pipo.todoList.push("tarea de pipoooo")
+    console.log(pipo)
+
+    d.addEventListener("submit", e => {
+      let data = copyState();
+      const $inputt = d.querySelector("#form-dom");
+      e.preventDefault()
+
+      data.todoList.push($inputt.pi.value)
+      setState({ todoList: data.todoList })
+
+      console.log(template.data)
+      $inputt.pi.value = "";
+      $inputt.pi.focus();
+    })
+  </script>
+</body>
+
+</html>

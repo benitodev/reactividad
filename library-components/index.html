@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UI basada en el estado</title>
+</head>
+
+<body>
+  <h1>UI con estado REACTIVO MUTABLE</h1>
+  <form id="form-dom">
+    <input type="text" name="pi" class="pi">
+    <input type="submit">
+  </form>
+  <h2>Lista</h2>
+  <ul class="list"></ul>
+
+  <script src="./Components.js"></script>
+  <script>
+    const d = document;
+    const app = new Component({
+      el: ".list",
+      data: {
+        todoList: []
+      },
+      template: function (props) {
+        if (props.todoList.length < 1) {
+          return `<p><em>No hay ninguna lista por hacer</em></p>`
+        }
+
+
+        let todoTemplate = props.todoList.map(item => `<li>${item}</li>`).join("");
+
+        return todoTemplate
+      }
+    });
+
+    app.setState({
+      todoList: ["Tarea 1", "Tarea 2"]
+    })
+
+    d.addEventListener("DOMContentLoaded", app.render)
+
+    d.addEventListener("submit", e => {
+
+      e.preventDefault()
+      let $form = d.querySelector("#form-dom");
+
+      let data = app.getState();
+      data.todoList.push($form.pi.value)
+      app.setState({ todoList: data.todoList })
+
+
+      $form.pi = "";
+      $form.pi.focus();
+    })
+  </script>
+</body>
+
+</html>
